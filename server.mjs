@@ -27,6 +27,9 @@ export function createAppServer(options = {}) {
   return createServer(async (req, res) => {
     try {
       const url = new URL(req.url, 'http://localhost');
+      if (req.method === 'GET' && url.pathname === '/healthz') {
+        return json(res, 200, { status: 'ok' });
+      }
       if (req.method === 'GET' && url.pathname === '/api/config') {
         return json(res, 200, publicConfig(await configStore.get()));
       }

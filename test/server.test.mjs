@@ -65,6 +65,12 @@ test('serves the synchronized prompt library', async () => {
   assert.equal(payload.prompts.length, 535);
 });
 
+test('reports container health', async () => {
+  const response = await fetch(`${appUrl}/healthz`);
+  assert.equal(response.status, 200);
+  assert.deepEqual(await response.json(), { status: 'ok' });
+});
+
 test('does not expose the server API key', async () => {
   const response = await fetch(`${appUrl}/api/config`);
   const payload = await response.json();
