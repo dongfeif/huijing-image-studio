@@ -1,0 +1,6 @@
+.env
+.git
+.runtime
+deploy
+generated-images
+test

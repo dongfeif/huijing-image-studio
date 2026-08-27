@@ -1,0 +1,14 @@
+{
+  "name": "gpt-image-studio",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file-if-exists=.env server.mjs",
+    "sync:prompts": "node scripts/sync-prompts.mjs",
+    "translate:prompts": "node --env-file-if-exists=.env scripts/translate-prompts.mjs",
+    "validate:prompts": "node scripts/validate-translations.mjs",
+    "test:request": "node scripts/test-image-request.mjs",
+    "test": "node --test test/*.test.mjs"
+  }
+}

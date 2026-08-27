@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light" />
+    <meta name="api-base" content="" />
+    <meta property="og:image" content="./cover.png" />
+    <title>绘境 - 图片创作灵感库</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="绘境首页"><span class="brandMark" aria-hidden="true">绘</span><strong>绘境</strong></a>
+      <nav class="mainNav" aria-label="主导航"><a class="active" href="#gallery">发现</a><a href="#featured">精选</a></nav>
+      <label class="searchBox" for="searchInput"><span aria-hidden="true">⌕</span><input id="searchInput" name="template-search" type="search" placeholder="搜索模板、风格或场景" autocomplete="off" /></label>
+      <div class="topActions">
+        <span class="configStatus" id="configStatus"><i></i><span>未配置</span></span>
+        <button class="textButton" id="tourButton" type="button">新手引导</button>
+        <button class="solidButton" id="settingsButton" type="button">设置</button>
+      </div>
+    </header>
+
+    <nav class="categoryBar" id="categoryBar" aria-label="模板分类"><div class="categoryTrack" id="categoryTrack"></div></nav>
+
+    <main id="gallery">
+      <section class="galleryIntro">
+        <div><h1>从一个好模板开始创作</h1><p id="libraryMeta">正在载入灵感库</p></div>
+        <label class="featuredToggle"><input id="featuredFilter" type="checkbox" /><span>只看精选</span></label>
+      </section>
+      <section class="masonry" id="promptGrid" aria-live="polite"></section>
+      <div class="emptyState" id="emptyState" hidden><strong>没有找到合适的模板</strong><p>换个关键词或分类试试</p></div>
+      <button class="loadMore" id="loadMoreButton" type="button" hidden>查看更多模板</button>
+    </main>
+
+    <div class="overlay" id="composerOverlay" hidden>
+      <section class="composer" role="dialog" aria-modal="true" aria-labelledby="composerTitle">
+        <header class="composerHeader">
+          <button class="iconButton" id="closeComposerButton" type="button" aria-label="关闭创作面板" title="关闭">×</button>
+          <div><span id="composerCategory">模板创作</span><h2 id="composerTitle">选择一个模板</h2></div>
+          <a id="sourceLink" href="#" target="_blank" rel="noreferrer" hidden>查看来源</a>
+        </header>
+        <div class="composerBody">
+          <aside class="referencePane">
+            <img id="selectedImage" alt="" />
+            <div class="referenceMeta"><span id="selectedId"></span><div id="selectedTags"></div></div>
+          </aside>
+          <div class="editorPane">
+            <section class="editorSection">
+              <div class="fieldHeading">
+                <label for="templateInput">提示词模板</label>
+                <div class="languageSwitch" id="languageSwitch" aria-label="提示词语言"><button class="active" data-language="zh" type="button">中文</button><button data-language="en" type="button">English</button></div>
+              </div>
+              <textarea id="templateInput" rows="11" spellcheck="false"></textarea>
+            </section>
+            <section class="editorSection" id="contentSection">
+              <div class="fieldHeading"><label for="contentInput">创作内容</label><button class="inspirationButton" id="inspirationButton" type="button">给我灵感</button></div>
+              <textarea id="contentInput" rows="5" placeholder="描述你想画的主体、文字、氛围、用途和限制"></textarea>
+            </section>
+            <details class="promptPreview"><summary>查看最终提示词</summary><pre id="finalPrompt"></pre></details>
+            <section class="generationOptions" aria-label="生成参数">
+              <label><span>尺寸</span><select id="sizeInput"><option value="1024x1024">1:1 方图</option><option value="1536x1024">3:2 横图</option><option value="1024x1536">2:3 竖图</option></select></label>
+              <label><span>质量</span><select id="qualityInput"><option value="low">快速</option><option value="medium">标准</option><option value="high">精细</option></select></label>
+              <label><span>格式</span><select id="formatInput"><option value="jpeg">JPEG</option><option value="png">PNG</option><option value="webp">WebP</option></select></label>
+            </section>
+            <footer class="generateBar"><span id="requestStatus" role="status">准备就绪</span><button class="generateButton" id="generateButton" type="button">生成图片</button></footer>
+          </div>
+          <aside class="resultPane">
+            <div class="resultHeading"><h3>生成结果</h3><button class="textButton" id="downloadButton" type="button" hidden>下载图片</button></div>
+            <div class="resultStage" id="resultStage">
+              <div class="resultPlaceholder" id="resultPlaceholder"><span>+</span><p>作品将在这里出现</p></div>
+              <div class="resultLoading" id="resultLoading" hidden><i></i><p>正在生成图片</p></div>
+              <img id="outputImage" alt="生成结果" hidden />
+            </div>
+            <dl class="resultMeta"><div><dt>模型</dt><dd id="outputModel">—</dd></div><div><dt>规格</dt><dd id="outputSpec">—</dd></div></dl>
+          </aside>
+        </div>
+      </section>
+    </div>
+
+    <div class="overlay" id="settingsOverlay" hidden>
+      <section class="settingsDialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+        <header><div><span>接口配置</span><h2 id="settingsTitle">设置</h2></div><button class="iconButton" id="closeSettingsButton" type="button" aria-label="关闭设置" title="关闭">×</button></header>
+        <p class="settingsHint">配置由后端服务保存并用于请求大模型。API Key 不会写入网页，也不会从后端返回浏览器。</p>
+        <label class="settingsField"><span>Base URL</span><input id="baseUrlInput" type="url" placeholder="https://api.example.com/v1" /></label>
+        <label class="settingsField"><span>API Key</span><input id="apiKeyInput" name="api-key" type="password" placeholder="输入接口密钥" autocomplete="new-password" /></label>
+        <div class="settingsColumns">
+          <label class="settingsField"><span>图片模型</span><input id="imageModelInput" type="text" placeholder="gpt-image-2" /></label>
+          <label class="settingsField"><span>灵感模型</span><input id="inspirationModelInput" type="text" placeholder="gpt-5.6-sol" /></label>
+        </div>
+        <div class="settingsSource" id="settingsSource">正在读取本地配置</div>
+        <footer><button class="textButton danger" id="clearSettingsButton" type="button">清除后端配置</button><button class="solidButton" id="saveSettingsButton" type="button">保存设置</button></footer>
+      </section>
+    </div>
+
+    <div class="tourLayer" id="tourLayer" hidden>
+      <div class="tourShade"></div>
+      <div class="tourBubble" id="tourBubble" role="dialog" aria-live="polite">
+        <span id="tourProgress">1 / 5</span><strong id="tourTitle"></strong><p id="tourDescription"></p>
+        <footer><button class="textButton" id="tourSkipButton" type="button">跳过</button><button class="solidButton" id="tourNextButton" type="button">下一步</button></footer>
+      </div>
+    </div>
+
+    <template id="promptCardTemplate">
+      <article class="promptCard">
+        <button type="button" class="cardImage" aria-label="使用模板"><img loading="lazy" alt="" /><span class="useTemplate">使用模板</span><span class="featuredMark" hidden>精选</span></button>
+        <div class="cardMeta"><strong></strong><span></span></div>
+      </article>
+    </template>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
